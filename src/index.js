@@ -1,17 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import {Provider} from 'react-redux'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import configureStore from './store/configureStore'
+import {startGetUser} from './actions/userAction'
+import {startGetCustomers} from './actions/customersAction'
+import {startGetDepartments} from './actions/departmentsAction'
+import {startGetEmployees} from './actions/employeesAction'
+import {startGetTickets} from './actions/ticketsAction'
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const store =  configureStore()
+console.log(store.getState())
+
+store.subscribe(()=>{
+    console.log(store.getState())
+})
+
+//handle page reload
+if(localStorage.getItem('authToken')){
+    store.dispatch(startGetUser())
+    store.dispatch(startGetCustomers())
+    store.dispatch(startGetDepartments())
+    store.dispatch(startGetEmployees())
+    store.dispatch(startGetTickets())
+}
+
+const jsx = (
+    <Provider store={store}>
+        <App/>
+    </Provider>
+)
+ReactDOM.render(jsx, document.getElementById('root'))
